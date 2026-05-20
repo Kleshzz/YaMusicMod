@@ -6,7 +6,7 @@ import { Switch } from "@ui/components/ui/switch";
 
 import { FaDiscord } from "react-icons/fa";
 import { Info } from "lucide-react";
-import { Alert, AlertDescription } from "@ui/components/ui/alert";
+import { Alert } from "@ui/components/ui/alert";
 
 export function DiscordRPC() {
   const [discordRPCEnabled, setDiscordRPCEnabled] = useState(true);

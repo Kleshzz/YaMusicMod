@@ -1,15 +1,13 @@
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useQuery } from "@tanstack/react-query";
 
-import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@ui/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@ui/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { ScrollArea } from "@ui/components/ui/scroll-area";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Toaster } from "@ui/components/ui/sonner";
 
-import { Playground } from "@ui/components/playground";
-import { IPChecker } from "@ui/components/ip-checker";
 import { FontChanger } from "@ui/components/font-changer";
 import { Devtools } from "@ui/components/devtools";
 import { Downloader } from "@ui/components/downloader";
@@ -26,15 +24,11 @@ import { Button } from "./components/ui/button";
 
 import logo from "@ui/assets/logo.webp?inline";
 import discordBg from "@ui/assets/discord-bg.png?inline";
-import boostyBg from "@ui/assets/boosty-bg.png?inline";
-
 import { FaDiscord, FaGithub } from "react-icons/fa";
-import { SiBoosty } from "react-icons/si";
 import { RxUpdate } from "react-icons/rx";
 
 const IS_DEV = false;
 const DISCORD_INVITE_URL = "https://discord.gg/4nK7nk2sY8";
-const BOOSTY_URL = "https://boosty.to/yandexmusic";
 const GITHUB_REPO_URL = "https://github.com/Stephanzion/YandexMusicBetaMod/";
 
 export default function App() {

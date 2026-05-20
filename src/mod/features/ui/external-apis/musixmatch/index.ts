@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from "axios";
 import { Result, err, ok } from "neverthrow";
 import { signRequestUrl } from "./utils";
-import { type Lyrics, type Subtitle, type Track, type AllMetaResponse } from "./models";
+import { type AllMetaResponse } from "./models";
 import { Md5 } from "ts-md5";
 
 const MUSIXMATCH_API_URL = "https://apic.musixmatch.com/ws/1.1/";
@@ -18,7 +18,7 @@ interface MusixmatchApiConfig {
 }
 
 class MusixmatchApi {
-  private readonly client: AxiosInstance;
+
   private readonly usertoken: string;
   private readonly cookie: string;
 
@@ -28,14 +28,7 @@ class MusixmatchApi {
       config.cookie ??
       `x-mxm-token-guid=${Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}; mxm-encrypted-token=; x-mxm-user-id=mxm:${Md5.hashStr(Math.random().toString())}`;
 
-    this.client = axios.create({
-      baseURL: MUSIXMATCH_API_URL,
-      headers: {
-        "Accept-Encoding": "gzip",
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; ASUS_I005DA Build/PI)",
-        "x-mxm-endpoint": "default",
-      },
-    });
+
   }
 
   async getAllMetaRequest(trackName: string, artistName: string, duration?: number): Promise<Result<any, string>> {

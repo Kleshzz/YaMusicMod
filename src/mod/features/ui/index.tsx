@@ -17,7 +17,7 @@ Sentry.init({
   sampleRate: 1.0,
   tracePropagationTargets: [/^\//, /^https:\/\/api.music.yandex.net\//],
 
-  beforeSend: (event, hint) => {
+  beforeSend: (event, _hint) => {
     // @ts-ignore
     if (!window.__yandexMusicModAnalyticsEnabled) return null;
     return event;

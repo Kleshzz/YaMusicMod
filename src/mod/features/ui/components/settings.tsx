@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { getAccountSettings, updateAccountSettings } from "~/mod/features/utils/api";
+import axios from "axios";
 
 import { ExpandableCard } from "@ui/components/ui/expandable-card";
 import { Label } from "@ui/components/ui/label";
@@ -9,8 +8,6 @@ import { Button } from "@ui/components/ui/button";
 import { Switch } from "@ui/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { toast } from "sonner";
-
-import { AiOutlineExperiment } from "react-icons/ai";
 import { Settings as SettingsIcon } from "lucide-react";
 
 export function Settings() {

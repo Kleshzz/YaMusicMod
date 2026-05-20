@@ -1,8 +1,7 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 import {
   getPlaylistTracks,
-  getTracksInfo,
   likeTrack,
   getAccountInfo,
   getLikesAndHistory,
@@ -14,10 +13,8 @@ import { Button } from "@ui/components/ui/button";
 import { If } from "@ui/components/ui/if";
 import { Progress } from "@ui/components/ui/progress";
 import { toast } from "sonner";
-import { Alert, AlertDescription } from "@ui/components/ui/alert";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/components/ui/select";
+import { Alert } from "@ui/components/ui/alert";
 import { Input } from "@ui/components/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 
 import { Info, Heart } from "lucide-react";
 

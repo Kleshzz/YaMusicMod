@@ -17,7 +17,7 @@ async function updateQuality() {
   }
 }
 
-window.yandexMusicMod.onStorageChanged((key: string, value: any) => {
+window.yandexMusicMod.onStorageChanged((key: string, _value: any) => {
   if (key.includes("autoBestQuality")) updateQuality();
 });
 

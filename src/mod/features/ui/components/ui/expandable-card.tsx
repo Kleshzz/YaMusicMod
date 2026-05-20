@@ -11,7 +11,7 @@ export function ExpandableCard(props: {
   contentClassName?: string | undefined;
   className?: string | undefined;
 }) {
-  const [value, setValue] = useState(Math.random().toString());
+  const [value, _setValue] = useState(Math.random().toString());
 
   return (
     <Accordion

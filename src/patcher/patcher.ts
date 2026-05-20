@@ -373,7 +373,7 @@ export async function processBuild(build: AppBuild) {
 
   console.log(`\n---- 🚧 Building preload.js ----`);
 
-  let buildResult = await Bun.build({
+  await Bun.build({
     target: "browser",
     format: "cjs",
     sourcemap: "linked",

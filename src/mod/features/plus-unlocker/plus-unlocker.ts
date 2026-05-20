@@ -1,7 +1,5 @@
-import { onYandexApiResponse, onYandexApiRequest } from "~/mod/features/utils/utils";
+import { onYandexApiResponse } from "~/mod/features/utils/utils";
 import { getTrackUrl, getTracksInfo, QualityEnum } from "~/mod/features/utils/api";
-import { musixmatchApi } from "@ui/external-apis/musixmatch";
-import { type Lyrics, type Subtitle } from "@ui/external-apis/musixmatch/models";
 import { toast } from "sonner";
 import * as Sentry from "@sentry/react";
 

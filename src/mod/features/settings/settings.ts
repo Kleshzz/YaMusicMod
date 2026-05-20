@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react";
 
 let exeptionsCaptureEnabled = true;
 

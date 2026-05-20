@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import allowedCountries from "@ui/lib/allowedCountries.json";
 
 export function IPChecker() {
-  const [language, setLanguage] = useState("ru");
+  const [language, _setLanguage] = useState("ru");
 
   const countryQuery = useQuery({
     queryKey: ["country", language],

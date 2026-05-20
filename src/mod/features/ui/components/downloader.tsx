@@ -1,7 +1,7 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { isPlaying, getProgress, getTrackMeta } from "~/mod/features/utils/player";
+import { getTrackMeta } from "~/mod/features/utils/player";
 import {
   getAlbumTracks,
   getArtistTracks,
@@ -16,7 +16,7 @@ import { Button } from "@ui/components/ui/button";
 import { If } from "@ui/components/ui/if";
 import { Progress } from "@ui/components/ui/progress";
 import { toast } from "sonner";
-import { Alert, AlertDescription } from "@ui/components/ui/alert";
+import { Alert } from "@ui/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/components/ui/select";
 import { Input } from "@ui/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";

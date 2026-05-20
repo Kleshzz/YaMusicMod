@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { ExpandableCard } from "@ui/components/ui/expandable-card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/components/ui/select";
-import { Label } from "@ui/components/ui/label";
-import { Switch } from "@ui/components/ui/switch";
 import { Slider } from "@ui/components/ui/slider";
 import { Button } from "@ui/components/ui/button";
-import { If } from "@ui/components/ui/if";
 
 import { Expand } from "lucide-react";
 
