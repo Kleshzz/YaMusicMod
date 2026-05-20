@@ -46,4 +46,4 @@
 
 ## 🧩 Гайд для добавления своих модов
 
-[📘 MODDING_GUIDE.md](./docs/MODDING_GUIDE.md)
+[📘 MODDING_GUIDE.md](./MODDING_GUIDE.md)
