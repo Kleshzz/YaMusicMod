@@ -34,8 +34,8 @@ bun --version
 #### 3) Клонируйте репозиторий
 
 ```bash
-git clone https://github.com/Stephanzion/YandexMusicBetaMod.git
-cd YandexMusicBetaMod
+git clone --depth 1 https://github.com/Kleshzz/YaMusicMod.git
+cd YaMusicMod
 ```
 
 #### 4) Установите зависимости
