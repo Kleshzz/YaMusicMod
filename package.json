@@ -46,7 +46,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.21",
-    "@types/bun": "1.3.9",
+    "@types/bun": "1.3.14",
     "asar": "^3.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
