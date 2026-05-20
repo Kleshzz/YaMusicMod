@@ -2,10 +2,8 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { ExpandableCard } from "@ui/components/ui/expandable-card";
-import { ExpandableCard } from "@ui/components/ui/expandable-card";
 import { CodeEditor } from "@ui/components/ui/code-editor";
 
-import { isPlaying, getProgress, getTrackMeta } from "~/mod/features/utils/player";
 import { isPlaying, getProgress, getTrackMeta } from "~/mod/features/utils/player";
 import { Play } from "lucide-react";
 

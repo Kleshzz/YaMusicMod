@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from "axios";
+import axios from "axios";
 import { Result, err, ok } from "neverthrow";
 import { signRequestUrl } from "./utils";
 import { type AllMetaResponse } from "./models";
