@@ -19,7 +19,7 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install ${{ github.actor == 'dependabot[bot]' && '' || '--frozen-lockfile' }}
+        run: bun install ${{ startsWith(github.actor, 'dependabot') && '' || '--frozen-lockfile' }}
 
       - name: Type check
         run: bun x tsc --noEmit
