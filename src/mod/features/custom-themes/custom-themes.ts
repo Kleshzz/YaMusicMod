@@ -212,12 +212,12 @@ updateTheme();
 // Перехват запросов к backgroundWorker
 (function () {
   window.__workers = [];
-  const OrigWorker = window.Worker as any;
-  window.Worker = function (...args: any[]) {
+  const OrigWorker = window.Worker;
+  window.Worker = function (...args: ConstructorParameters<typeof Worker>) {
     const worker = new OrigWorker(...args);
-    const origPostMessage = worker.postMessage;
+    const origPostMessage = worker.postMessage.bind(worker);
     window.__workers.push(worker);
-    worker.postMessage = function (message, transfer) {
+    worker.postMessage = function (message: any, transfer: any) {
       if (message?.payload?.backgroundColor || message?.payload?.collectionHue) {
         if (!message?.payload?.isYandexMusicMod)
           setTimeout(() => {

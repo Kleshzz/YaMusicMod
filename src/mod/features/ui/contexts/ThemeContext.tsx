@@ -1,4 +1,4 @@
-import { createContext, ReactNode, use, useEffect, useState } from "react";
+import { createContext, type ReactNode, use, useEffect, useState } from "react";
 
 type ThemeType = {
   theme: string;

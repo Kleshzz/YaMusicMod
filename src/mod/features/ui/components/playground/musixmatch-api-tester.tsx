@@ -87,10 +87,7 @@ const useMusixmatchLyrics = (artist: string, trackTitle: string, lyricsType: Lyr
       }
 
       // Get the axios configuration for the request
-      const configResult =
-        lyricsType === "lyrics"
-          ? await musixmatchApi.getLyricsRequest(trackTitle, artist)
-          : await musixmatchApi.getSubtitleRequest(trackTitle, artist);
+      const configResult = await musixmatchApi.getAllMetaRequest(trackTitle, artist);
 
       if (configResult.isErr()) {
         throw new Error(`Failed to get ${lyricsType} config: ${configResult.error}`);
@@ -103,16 +100,13 @@ const useMusixmatchLyrics = (artist: string, trackTitle: string, lyricsType: Lyr
         throw new Error(`Failed to get ${lyricsType}: ${response.error}`);
       }
 
-      // Check Musixmatch API response status
-      if (response.data.message.header.status_code !== 200) {
-        throw new Error(`Musixmatch API error: ${response.data.message.body}`);
-      }
+      const macroCalls = response.data.macro_calls;
 
       // Extract the data based on the type
       const data =
         lyricsType === "lyrics"
-          ? (response.data.message.body.lyrics as Lyrics)
-          : (response.data.message.body.subtitle as Subtitle);
+          ? (macroCalls["track.lyrics.get"].message.body.lyrics as Lyrics)
+          : (macroCalls["track.subtitles.get"].message.body.subtitle_list[0]?.subtitle as Subtitle);
 
       return data;
     },

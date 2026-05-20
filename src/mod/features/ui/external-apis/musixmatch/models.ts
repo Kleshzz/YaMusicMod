@@ -168,3 +168,7 @@ export interface AllMetaResponse {
     };
   };
 }
+
+export type Lyrics = AllMetaResponse['macro_calls']['track.lyrics.get']['message']['body']['lyrics'];
+export type Subtitle = AllMetaResponse['macro_calls']['track.subtitles.get']['message']['body']['subtitle_list'][number]['subtitle'];
+export type Track = AllMetaResponse['macro_calls']['matcher.track.get']['message']['body']['track'];

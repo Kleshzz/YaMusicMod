@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ResultAsync } from "neverthrow";
 
-import { Section, Song } from "./models";
+import { type Section, type Song } from "./models";
 
 const GENIUS_LOGGED_OUT_TOKEN = "ZTejoT_ojOEasIkT9WrMBhBQOz6eYKK5QULCMECmOhvwqjRZ6WbpamFe3geHnvp3";
 

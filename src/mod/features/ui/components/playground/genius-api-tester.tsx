@@ -8,7 +8,7 @@ import { Label } from "@ui/components/ui/label";
 import { CodeEditor } from "@ui/components/ui/code-editor";
 
 import { geniusApi } from "@ui/external-apis/genius";
-import { FluffyChild, PurpleChild, LyricsDOM } from "@ui/external-apis/genius/models";
+import type { FluffyChild, PurpleChild, LyricsDOM } from "@ui/external-apis/genius/models";
 import { Music } from "lucide-react";
 
 function GeniusApiTester() {

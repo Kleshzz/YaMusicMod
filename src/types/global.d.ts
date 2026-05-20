@@ -18,6 +18,7 @@ declare global {
     };
     VERSION: string;
     __getPlayerState: () => any;
+    __workers: (Worker & { objectURL?: string })[];
   }
 }
 
