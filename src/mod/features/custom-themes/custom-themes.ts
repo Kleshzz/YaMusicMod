@@ -167,11 +167,11 @@ function updateVibeBackgroundColor() {
     let match;
     if (computed.startsWith("color(srgb")) {
       match = computed.match(/color\(srgb ([\d.]+) ([\d.]+) ([\d.]+)\)/);
-      if (!match) return null;
+      if (!match || match[1] == null || match[2] == null || match[3] == null) return null;
       return { r: parseFloat(match[1]), g: parseFloat(match[2]), b: parseFloat(match[3]) };
     } else if (computed.startsWith("rgb")) {
       match = computed.match(/rgb\((\d+), (\d+), (\d+)\)/);
-      if (!match) return null;
+      if (!match || match[1] == null || match[2] == null || match[3] == null) return null;
       return {
         r: parseInt(match[1], 10) / 255,
         g: parseInt(match[2], 10) / 255,
@@ -213,22 +213,23 @@ updateTheme();
 (function () {
   window.__workers = [];
   const OrigWorker = window.Worker;
-  window.Worker = function (...args: ConstructorParameters<typeof Worker>) {
-    const worker = new OrigWorker(...args);
-    const origPostMessage = worker.postMessage.bind(worker);
-    window.__workers.push(worker);
-    worker.postMessage = function (message: any, transfer: any) {
-      if (message?.payload?.backgroundColor || message?.payload?.collectionHue) {
-        if (!message?.payload?.isYandexMusicMod)
-          setTimeout(() => {
-            updateVibeBackgroundColor();
-          }, 500);
-      }
-
-      return origPostMessage.call(worker, message, transfer);
-    };
-    return worker;
-  };
+  window.Worker = new Proxy(OrigWorker, {
+    construct(target, args: ConstructorParameters<typeof Worker>) {
+      const worker = new target(...args);
+      const origPostMessage = worker.postMessage.bind(worker);
+      window.__workers.push(worker);
+      worker.postMessage = function (message: any, transfer: any) {
+        if (message?.payload?.backgroundColor || message?.payload?.collectionHue) {
+          if (!message?.payload?.isYandexMusicMod)
+            setTimeout(() => {
+              updateVibeBackgroundColor();
+            }, 500);
+        }
+        return origPostMessage(message, transfer);
+      };
+      return worker;
+    },
+  });
 
   const _atob = atob;
 
