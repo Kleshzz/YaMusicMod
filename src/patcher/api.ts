@@ -2,6 +2,7 @@ import axios from "axios";
 import yaml from "js-yaml";
 import { z } from "zod";
 import { ok, err, Result } from "neverthrow";
+import * as fs from "node:fs/promises";
 
 import type { AppBuild } from "~/types/AppBuild";
 
@@ -82,7 +83,7 @@ export async function downloadBuild(
       responseType: "arraybuffer",
     });
 
-    await Bun.write(filePath, response.data);
+    await fs.writeFile(filePath, Buffer.from(response.data));
 
     return ok();
   } catch (error) {

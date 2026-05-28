@@ -1,8 +1,11 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "url";
+import * as esbuild from "esbuild";
 import asar from "asar";
 import { prettifyDirectory } from "./prettier";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 const _7z = require("7zip-min");
 import { execSync } from "node:child_process";
 
@@ -373,13 +376,15 @@ export async function processBuild(build: AppBuild) {
 
   console.log(`\n---- 🚧 Building preload.js ----`);
 
-  await Bun.build({
-    target: "browser",
+  await esbuild.build({
+    entryPoints: [modPreloadScript],
+    bundle: true,
+    platform: "node",
     format: "cjs",
-    sourcemap: "linked",
+    sourcemap: true,
     minify: false,
-    entrypoints: [modPreloadScript],
     outdir: modCompiledDir,
+    external: ["electron"],
   });
 
   let preloadJsContents =
