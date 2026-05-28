@@ -14,23 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v6
         with:
-          bun-version: latest
-
-      - name: Cache bun dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          node-version: 22
+          cache: 'npm'
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile || bun install
+        run: npm ci
 
       - name: Type check
-        run: bun x tsc --noEmit
+        run: npx tsc --noEmit
 
       - name: Build UI
-        run: bun run ui:build
+        run: npm run ui:build

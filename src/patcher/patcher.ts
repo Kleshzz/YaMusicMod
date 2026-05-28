@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import asar from "asar";
 import { prettifyDirectory } from "./prettier";
 const _7z = require("7zip-min");
-import { $ } from "bun";
+import { execSync } from "node:child_process";
 
 import { downloadBuild } from "./api";
 import type { AppBuild } from "~/types/AppBuild";
@@ -369,7 +369,7 @@ export async function processBuild(build: AppBuild) {
 
   console.log(`\n---- 🚧 Building renderer.js ----`);
 
-  await $`bun ui:build`;
+  execSync("npm run ui:build", { stdio: "inherit" });
 
   console.log(`\n---- 🚧 Building preload.js ----`);
 
@@ -443,11 +443,9 @@ export async function processBuild(build: AppBuild) {
 
   logProgress(`🛠️  Build modded app`);
 
-  await $`bun install`.cwd(buildModdedDir);
+  execSync("npm install", { cwd: buildModdedDir, stdio: "inherit" });
 
-  // await $`bunx electron .`.cwd(buildModdedDir);
-
-  await $`bunx electron-builder`.cwd(buildModdedDir);
+  execSync("npx electron-builder", { cwd: buildModdedDir, stdio: "inherit" });
 
   logProgress(`✔️   Done`);
 

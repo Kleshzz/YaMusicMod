@@ -32,9 +32,6 @@ updates:
           - "@eslint/*"
           - "eslint-*"
           - "typescript-eslint"
-      types:
-        patterns:
-          - "@types/*"
     ignore:
       - dependency-name: "electron"
         update-types: ["version-update:semver-major"]
@@ -44,4 +41,4 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"

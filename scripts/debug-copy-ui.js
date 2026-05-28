@@ -1,8 +1,8 @@
-import { $ } from "bun";
+import { execSync } from "node:child_process";
 import path from "path";
 import fs from "fs";
 
-await $`bun run ui:build`;
+execSync("npm run ui:build", { stdio: "inherit" });
 
 const modPath = ".versions/5.86.0/mod/app/yandexMusicMod/";
 const sourcesPath = "src/mod/dist/";
