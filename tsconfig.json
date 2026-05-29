@@ -27,7 +27,6 @@
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": false,
 
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
       "@ui/*": ["./src/mod/features/ui/*"]
