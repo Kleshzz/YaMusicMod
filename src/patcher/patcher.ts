@@ -69,7 +69,7 @@ export async function processBuild(build: AppBuild) {
   const appAsarPath = path.resolve(path.join(extractDir, "resources", "app.asar"));
   const appIconPath = path.resolve(path.join(extractDir, "resources", "assets", "icon.ico"));
 
-  if (appAsarPath) {
+  if (fs.existsSync(appAsarPath)) {
     logProgress(`✔️   Found app.asar`);
   } else {
     logProgress(`❌ app.asar was not found inside the extracted installer for ${build.version}`);
@@ -167,6 +167,8 @@ export async function processBuild(build: AppBuild) {
     },
     linux: {
       icon: "assets/icon.png",
+      target: ["AppImage"],
+      artifactName: "Yandex-Music-${version}.${ext}",
     },
     extraResources: [
       {
@@ -318,6 +320,16 @@ export async function processBuild(build: AppBuild) {
       "https://yandex.ru/ads/*",
       "https://strm.yandex.ru/ping",
       "https://yandex.ru/an/*",
+      "https://awaps.yandex.ru/*",
+      "https://bs.yandex.ru/*",
+      "https://partner.yandex.ru/*",
+      "https://banners.yandex.ru/*",
+      "https://yandex.ru/ads/adfox/*",
+      "https://yastatic.net/pcode/*",
+      "https://mc.yandex.com/*",
+      "https://an.yandex.ru/*",
+      "https://browser-report.yandex.ru/*",
+      "https://crash-reports.browser.yandex.net/*",
     ];
 
     indexJsContents = indexJsContents.replace(
@@ -337,9 +349,9 @@ export async function processBuild(build: AppBuild) {
         urls: ["https://api.music.yandex.net/*"],
       },
       (details, callback) => {
-        const bannedHeaders = ["x-yandex-music-device", "x-request-id"];
+        const bannedHeaders = ["x-yandex-music-device", "x-request-id", "x-yandex-music-yt-uid", "x-yandex-uid"];
         bannedHeaders.forEach((header) => {
-          details.requestHeaders[header] = undefined;
+          delete details.requestHeaders[header];
         });
         callback({ requestHeaders: details.requestHeaders });
       },
@@ -437,6 +449,10 @@ export async function processBuild(build: AppBuild) {
 
   fs.writeFileSync(staticFiles.indexJs, indexJsContents);
   fs.writeFileSync(staticFiles.preloadJs, preloadJsContents);
+
+  // Освобождаем память от больших строковых буферов
+  indexJsContents = "";
+  preloadJsContents = "";
 
   logProgress(`✔️   Done`);
 

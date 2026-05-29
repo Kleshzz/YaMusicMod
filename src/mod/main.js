@@ -147,13 +147,8 @@ electron.ipcMain.handle(
       const decryptedData = await decryptYandexAudio(response.data, downloadInfo.key);
 
       // Write decrypted data to file
-      fs.writeFile(trackFilePath, Buffer.from(decryptedData), (err) => {
-        if (err) {
-          console.error("Error saving decrypted file:", err);
-          return { ok: false, error: "Error saving decrypted file: " + err };
-        }
-        console.log("Download and Decryption Completed");
-      });
+      await fs.promises.writeFile(trackFilePath, Buffer.from(decryptedData));
+      console.log("Download and Decryption Completed");
 
       // 2. Copy/reencode audio using direct ffmpeg command
       await new Promise((resolve, reject) => {
@@ -240,6 +235,9 @@ electron.ipcMain.handle(
             if (fs.existsSync(trackTempFilePath)) {
               fs.unlinkSync(trackTempFilePath);
             }
+            if (fs.existsSync(trackCoverPath)) {
+              fs.unlinkSync(trackCoverPath);
+            }
 
             resolve();
           }
@@ -279,8 +277,26 @@ electron.ipcMain.on("yandexMusicMod.openDownloadDirectory", async (_ev) => {
   await electron.openPath(saveFolder)
 });
 
-// window API - универсальный axios запрос
+// window API - универсальный axios запрос (ограничен доверенными доменами)
+const allowedAxiosDomains = [
+  "api.music.yandex.net",
+  "music.yandex.ru",
+  "music.yandex.net",
+];
+
 electron.ipcMain.handle("yandexMusicMod.axios", async (_ev, config) => {
+  // Проверяем что URL принадлежит доверенному домену
+  try {
+    const url = new URL(config.url || config.baseURL || "");
+    const isAllowed = allowedAxiosDomains.some((domain) => url.hostname === domain || url.hostname.endsWith("." + domain));
+    if (!isAllowed) {
+      console.warn("[yandexMusicMod.axios] Заблокирован запрос к недоверенному домену:", url.hostname);
+      return { success: false, error: "Domain not allowed: " + url.hostname };
+    }
+  } catch (e) {
+    return { success: false, error: "Invalid URL" };
+  }
+
   const client = axios.create({
     validateStatus: () => true,
   });

@@ -2,7 +2,6 @@ import axios from "axios";
 import yaml from "js-yaml";
 import { z } from "zod";
 import { ok, err, Result } from "neverthrow";
-import * as fs from "node:fs/promises";
 
 import type { AppBuild } from "~/types/AppBuild";
 
@@ -80,10 +79,16 @@ export async function downloadBuild(
 ): Promise<Result<void, Error>> {
   try {
     const response = await axios.get(`${UPDATE_DOMAIN}/stable/${build.path}`, {
-      responseType: "arraybuffer",
+      responseType: "stream",
     });
 
-    await fs.writeFile(filePath, Buffer.from(response.data));
+    const writer = (await import("node:fs")).createWriteStream(filePath);
+    response.data.pipe(writer);
+
+    await new Promise<void>((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
 
     return ok();
   } catch (error) {

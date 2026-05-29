@@ -1,16 +1,13 @@
 import { onYandexApiResponse } from "~/mod/features/utils/utils";
 import { getTrackUrl, getTracksInfo, QualityEnum } from "~/mod/features/utils/api";
 import { toast } from "sonner";
-import * as Sentry from "@sentry/react";
+
 
 // Заменить hasPlus на true, когда яндекс получает информацию о текущем пользователе
 onYandexApiResponse("api.music.yandex.net/account/about", async function (response: any) {
   const data = response.data;
   data.hasPlus = true;
-  Sentry.setUser({
-    id: data.uid,
-    username: data.login,
-  });
+
   console.log(`[PlusUnlocker] Change hasPlus value:`, data);
   return data;
 });

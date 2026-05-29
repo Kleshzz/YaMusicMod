@@ -1,7 +1,7 @@
 import { searchProperty } from "./react-fiber-search.js";
 import { z } from "zod";
 import { ok, err, Result } from "neverthrow";
-import * as Sentry from "@sentry/react";
+
 
 const PLAYER_SELECTOR = 'section[data-test-id="PLAYERBAR_DESKTOP"]';
 const PLAY_BUTTON_SELECTOR = 'button[data-test-id="PLAY_BUTTON"]';
@@ -75,11 +75,6 @@ export function getTrackMeta(): Result<any, string> {
   if (meta.title === "Промокод Upgrade") {
     if (!hasAdsInPlayer) {
       console.warn("[getTrackMeta] Обнаружена реклама в плеере");
-      Sentry.captureMessage("upgrade_promocode", {
-        extra: {
-          track: meta,
-        },
-      });
     }
     hasAdsInPlayer = true;
     return err("upgrade_promocode");

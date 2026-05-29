@@ -36,7 +36,7 @@ function initRpc() {
 }
 
 async function updateActivity() {
-  setTimeout(updateActivity, 500);
+  setTimeout(updateActivity, 2000);
 
   if (lastActivityChanged + ACTIVITY_COOLDOWN > Date.now()) return;
 
