@@ -1,5 +1,4 @@
 import { getTrackMeta, getProgress, isPlaying } from "~/mod/features/utils/player";
-import * as Sentry from "@sentry/react";
 
 let isRpcEnabled = true;
 let showModButton = true;
@@ -14,39 +13,35 @@ window.__getPlayerState = () => {
       return { enabled: isRpcEnabled, showModButton, data: null };
     }
 
-    const trackNameEl = document.querySelector('[data-test-id="VIBE_PLAYERBAR_TRACK_NAME"]');
-    const timecodeEl = document.querySelector('[data-test-id="VIBE_PLAYERBAR_TIMECODE"]');
-    const coverEl = document.querySelector('[data-test-id="VIBE_ALBUM_COVER"] img') as HTMLImageElement;
+    const trackNameEl = document.querySelector('[data-test-id="VIBE_PLAYERBAR_TRACK_NAME"]') as HTMLElement | null;
+    const timecodeEl = document.querySelector('[data-test-id="VIBE_PLAYERBAR_TIMECODE"]') as HTMLElement | null;
+    const coverEl = document.querySelector('[data-test-id="VIBE_ALBUM_COVER"] img') as HTMLImageElement | null;
+    const artistsEl = document.querySelector('[data-test-id="VIBE_DYNAMIC_ARTISTS"] [data-test-id="SEPARATED_ARTIST_TITLE"]') as HTMLElement | null;
 
-    // objectId из fiber
-    let trackId = null;
-    let fiberKey = Object.keys(trackNameEl).find(k => k.startsWith('__reactFiber$'));
-    if (fiberKey) {
-      let node = trackNameEl[fiberKey];
-      let count = 0;
-      while (node && count < 50) {
-        if (node.memoizedProps?.objectId) { trackId = node.memoizedProps.objectId; break; }
-        node = node.return;
-        count++;
+    let trackId: string | null = null;
+    if (trackNameEl) {
+      const fiberKey = Object.keys(trackNameEl as any).find((k: string) => k.startsWith('__reactFiber$'));
+      if (fiberKey) {
+        let node: any = (trackNameEl as any)[fiberKey];
+        let count = 0;
+        while (node && count < 50) {
+          if (node.memoizedProps?.objectId) { trackId = String(node.memoizedProps.objectId); break; }
+          node = node.return;
+          count++;
+        }
       }
     }
 
-    // artists из aria-label обложки - не подходит
-    // берем из VIBE_DYNAMIC_ARTISTS если есть
-    const artistsEl = document.querySelector('[data-test-id="VIBE_DYNAMIC_ARTISTS"] [data-test-id="SEPARATED_ARTIST_TITLE"]');
     const artistName = artistsEl?.innerText || 'Яндекс Музыка';
-
-    // таймкод
     const timecode = timecodeEl?.innerText || '';
     const [posStr, durStr] = timecode.split(' / ');
     const parseTime = (s: string) => {
       if (!s) return 0;
-      const [m, sec] = s.trim().split(':').map(Number);
-      return m * 60 + sec;
+      const parts = s.trim().split(':').map(Number);
+      return (parts[0] ?? 0) * 60 + (parts[1] ?? 0);
     };
-    const position = parseTime(posStr);
-    const duration = parseTime(durStr);
-
+    const position = parseTime(posStr ?? '');
+    const duration = parseTime(durStr ?? '');
     const coverUrl = coverEl?.src?.replace('/400x400', '/300x300') || undefined;
     const trackName = trackNameEl?.innerText?.split('\n')[0] || 'Unknown';
 
