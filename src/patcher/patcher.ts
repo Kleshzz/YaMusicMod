@@ -206,6 +206,11 @@ export async function processBuild(build: AppBuild) {
     const yandexMusicMod_fs = require("fs");
     const yandexMusicMod_path = require("path");
     const yandexMusicMod_electron = require("electron");
+
+    yandexMusicMod_electron.app.commandLine.appendSwitch('js-flags', '--max-old-space-size=256 --optimize-for-size');
+    yandexMusicMod_electron.app.commandLine.appendSwitch('disable-spell-checking');
+    yandexMusicMod_electron.app.commandLine.appendSwitch('disable-pdf-extension');
+
     const yandexMusicMod_appFolder = yandexMusicMod_electron.app.getPath("userData");
     const yandexMusicMod_settingsFilePath = yandexMusicMod_path.join(yandexMusicMod_appFolder, "mod_settings.json");
     let enableSystemToolbar = false;
@@ -260,7 +265,7 @@ export async function processBuild(build: AppBuild) {
   if (/const webPreferences = {/g.test(indexJsContents)) {
     indexJsContents = indexJsContents.replace(
       /const webPreferences = {/g,
-      "const webPreferences = {\n devTools: true, \n",
+      "const webPreferences = {\n devTools: true,\n backgroundThrottling: true,\n spellcheck: false,\n enableWebSQL: false,\n",
     );
   } else {
     logProgress(`❌ "const webPreferences = {" is not found in index.js`);
@@ -393,8 +398,8 @@ export async function processBuild(build: AppBuild) {
     bundle: true,
     platform: "node",
     format: "cjs",
-    sourcemap: true,
-    minify: false,
+    sourcemap: false,
+    minify: true,
     outdir: modCompiledDir,
     external: ["electron"],
   });
@@ -456,11 +461,11 @@ export async function processBuild(build: AppBuild) {
 
   logProgress(`✔️   Done`);
 
-  logProgress(`🛠️  Prettify all files in ${buildModdedDir}`);
-
-  await prettifyDirectory(buildModdedDir);
-
-  logProgress(`✔️   Done`);
+  if (process.env.PRETTIFY === "true") {
+    logProgress(`🛠️  Prettify all files in ${buildModdedDir}`);
+    await prettifyDirectory(buildModdedDir);
+    logProgress(`✔️   Done`);
+  }
 
   logProgress(`🛠️  Build modded app`);
 

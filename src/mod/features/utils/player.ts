@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ok, err, Result } from "neverthrow";
 
 
-const PLAYER_SELECTOR = 'section[data-test-id="PLAYERBAR_DESKTOP"]';
+const PLAYER_SELECTOR = 'section[data-test-id="PLAYERBAR_DESKTOP"], section[data-test-id="VIBE_PLAYERBAR"]';
 const PLAY_BUTTON_SELECTOR = 'button[data-test-id="PLAY_BUTTON"]';
 const PAUSE_BUTTON_SELECTOR = 'button[data-test-id="PAUSE_BUTTON"]';
 
@@ -94,6 +94,7 @@ export function getTrackMeta(): Result<any, string> {
         name: z.string(),
       }),
     ),
+    coverUri: z.string().optional(),
     albums: z
       .array(
         z.object({

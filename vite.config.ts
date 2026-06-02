@@ -5,12 +5,14 @@ import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
+  const isProd = mode === "production";
 
   return {
     base: env.VITE_BASE_URL ?? "./",
     plugins: [react(), tailwindcss()],
     esbuild: {
       legalComments: "none",
+      drop: isProd ? ["console", "debugger"] : [],
     },
     resolve: {
       alias: {
@@ -20,10 +22,12 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: "./src/mod/dist",
-      sourcemap: true,
-      minify: true,
+      sourcemap: false,
+      minify: "esbuild",
       cssMinify: true,
       cssCodeSplit: false,
+      target: "chrome136",
+      reportCompressedSize: false,
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, "./src/mod/renderer.ts"),

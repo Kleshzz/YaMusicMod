@@ -15,11 +15,3 @@ electron.contextBridge.exposeInMainWorld("yandexMusicMod", {
   openFolder: (folderPath: string) => electron.ipcRenderer.invoke("yandexMusicMod.openFolder", folderPath),
   axios: (config: any) => electron.ipcRenderer.invoke("yandexMusicMod.axios", config),
 });
-
-// Register Ctrl+Shift+I to open DevTools
-electron.globalShortcut.register("CommandOrControl+Shift+I", () => {
-  const focusedWindow = electron.BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow.webContents.toggleDevTools();
-  }
-});

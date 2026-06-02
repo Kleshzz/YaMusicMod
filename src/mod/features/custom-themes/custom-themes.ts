@@ -2,7 +2,7 @@ import customStyles from "./custom-themes.css?inline";
 
 const stylesheetName = "yandex-music-mod-custom-themes-style";
 
-let disableVibeAnimationTimer = setInterval(() => {}, 1000 * 60 * 60);
+let disableVibeAnimationTimer: ReturnType<typeof setInterval> | null = null;
 
 let customThemeEnabled = false;
 let customThemeAccent = "#4A9EFF";
@@ -29,6 +29,11 @@ async function updateTheme() {
   customThemeAccent = accent;
 
   document.getElementById(stylesheetName)?.remove();
+
+  if (disableVibeAnimationTimer !== null) {
+    clearInterval(disableVibeAnimationTimer);
+    disableVibeAnimationTimer = null;
+  }
 
   if (enabled && accent) {
     const styleSheet = document.createElement("style");
@@ -66,8 +71,6 @@ async function updateTheme() {
         }
       `;
     }
-
-    clearInterval(disableVibeAnimationTimer);
 
     if (disableVibeAnimation) {
       styleSheet.innerHTML += `
@@ -113,7 +116,6 @@ async function updateTheme() {
 
 function updateVibeBackgroundColor() {
   function hexToHue(hex: string, offset = 0) {
-    // убрать #
     hex = hex.replace(/^#/, "");
     if (hex.length === 3) {
       hex = hex
@@ -147,7 +149,6 @@ function updateVibeBackgroundColor() {
       if (h < 0) h += 360;
     }
 
-    // применяем смещение
     h = (h + offset) % 360;
     if (h < 0) h += 360;
 
@@ -163,7 +164,6 @@ function updateVibeBackgroundColor() {
     const computed = getComputedStyle(el).color;
     document.body.removeChild(el);
 
-    // Парсим color(srgb ...) или rgb(...)
     let match;
     if (computed.startsWith("color(srgb")) {
       match = computed.match(/color\(srgb ([\d.]+) ([\d.]+) ([\d.]+)\)/);

@@ -2,85 +2,90 @@ const { BrowserWindow } = require("electron");
 const { Client } = require("@xhayper/discord-rpc");
 
 const CLIENT_ID = "1283109459463377011";
-const ACTIVITY_COOLDOWN = 10 * 1000;
+const UPDATE_INTERVAL = 2000;
 
-let lastActivityChanged = Date.now();
 let client;
+let lastTrackId = null;
+let lastIsPlaying = null;
 
 function initRpc() {
   client = new Client({ clientId: CLIENT_ID });
 
   client.login().catch((e) => {
     console.error("[DISCORD RPC]", e);
-    setTimeout(initRpc, 3000);
+    setTimeout(initRpc, 5000);
   });
 
   client.on("ready", () => {
-    console.log("[DISCORD RPC] Hooked!");
-    console.log("client.user", client.user?.username);
+    console.log("[DISCORD RPC] Hooked!", client.user?.username);
+    lastTrackId = null;
+    lastIsPlaying = null;
   });
 
-  client.on("disconnected", () => {
-    console.log("[DISCORD RPC] Disconnected");
-    setTimeout(initRpc, 3000);
-  });
-
-  client.on("error", () => {
-    console.log("[DISCORD RPC] Error");
-    setTimeout(initRpc, 3000);
-  });
-  client.on("close", () => {
-    console.log("[DISCORD RPC] Closed");
-    setTimeout(initRpc, 3000);
+  ["disconnected", "error", "close"].forEach((ev) => {
+    client.on(ev, () => {
+      console.log(`[DISCORD RPC] ${ev}`);
+      setTimeout(initRpc, 5000);
+    });
   });
 }
 
 async function updateActivity() {
-  setTimeout(updateActivity, 2000);
+  setTimeout(updateActivity, UPDATE_INTERVAL);
 
-  if (lastActivityChanged + ACTIVITY_COOLDOWN > Date.now()) return;
-
-  if (!client.user) return;
+  if (!client?.user) return;
 
   try {
     const playerState = await GetAppPlayerState();
+    console.log("[DISCORD RPC] playerState:", JSON.stringify(playerState));
 
-    // Discord RPC не включен
-    if (!playerState.enabled) {
+    if (!playerState?.enabled) {
       client.user.clearActivity();
       return;
     }
 
-    const playerStateData = playerState.data;
+    const data = playerState.data;
 
-    if (!playerStateData.isPlaying) {
-      client.user.clearActivity();
+    if (!data || !data.isPlaying) {
+      if (lastIsPlaying !== false) {
+        client.user.clearActivity();
+        lastIsPlaying = false;
+        lastTrackId = null;
+      }
       return;
     }
 
-    const startTimestamp = Math.round(Date.now() - playerStateData.playback.position * 1000);
-    const endTimestamp = Math.round(
-      Date.now() + (playerStateData.playback.duration - playerStateData.playback.position) * 1000,
-    );
+    const trackId = data.trackMeta.id;
+    const isPlaying = data.isPlaying;
+
+    // обновляем только если трек сменился или статус изменился
+    if (trackId === lastTrackId && isPlaying === lastIsPlaying) return;
+
+    lastTrackId = trackId;
+    lastIsPlaying = isPlaying;
+
+    const startTimestamp = Math.round(Date.now() - data.playback.position * 1000);
+    const endTimestamp = Math.round(Date.now() + (data.playback.duration - data.playback.position) * 1000);
+
+    const coverUrl = data.trackMeta.coverUri
+      ? data.trackMeta.coverUri.startsWith('http')
+        ? data.trackMeta.coverUri
+        : `https://${data.trackMeta.coverUri.replaceAll("%%", "300x300")}`
+      : undefined;
 
     const rpcRequest = {
       type: 2,
-      details: playerStateData.trackMeta.version
-        ? `${playerStateData.trackMeta.title} ${playerStateData.trackMeta.version}`
-        : playerStateData.trackMeta.title,
-      largeImageKey: playerStateData.trackMeta.coverUri
-        ? `https://${playerStateData.trackMeta.coverUri.replaceAll("%%", "300x300")}`
-        : undefined,
-      largeImageKey: playerStateData.trackMeta.coverUri
-        ? `https://${playerStateData.trackMeta.coverUri.replaceAll("%%", "100x100")}`
-        : undefined,
-      state: playerStateData.trackMeta.artists.map((a) => a.name).join(", "),
-      startTimestamp: startTimestamp,
-      endTimestamp: endTimestamp,
+      details: data.trackMeta.version
+        ? `${data.trackMeta.title} ${data.trackMeta.version}`
+        : data.trackMeta.title,
+      state: data.trackMeta.artists.map((a) => a.name).join(", "),
+      largeImageKey: coverUrl,
+      startTimestamp,
+      endTimestamp,
       buttons: [
         {
           label: "🎵 Открыть",
-          url: `https://music.yandex.ru/track/${playerStateData.trackMeta.id}`,
+          url: `https://music.yandex.ru/track/${trackId}`,
         },
       ],
       instance: false,
@@ -89,13 +94,11 @@ async function updateActivity() {
     if (playerState.showModButton) {
       rpcRequest.buttons.push({
         label: "💻 Yandex Music Mod",
-        url: `https://github.com/Stephanzion/YandexMusicBetaMod`,
+        url: "https://github.com/Stephanzion/YandexMusicBetaMod",
       });
     }
 
     client.user.setActivity(rpcRequest);
-
-    lastActivityChanged = Date.now();
   } catch (ex) {
     console.log("[DISCORD RPC]", ex);
   }
@@ -107,10 +110,18 @@ updateActivity();
 async function GetAppPlayerState() {
   const [win] = BrowserWindow.getAllWindows();
   if (win && !win.isDestroyed()) {
-    return win.webContents.executeJavaScript(`
+    if (process.argv.includes('--dev-tools') && !win.webContents.isDevToolsOpened()) {
+      win.webContents.openDevTools();
+    }
+    try {
+      return await win.webContents.executeJavaScript(`
         (()=>{
-            return window.__getPlayerState();
+          if (typeof window.__getPlayerState !== 'function') return undefined;
+          return window.__getPlayerState();
         })()
-       `);
+      `);
+    } catch (e) {
+      return undefined;
+    }
   }
 }
