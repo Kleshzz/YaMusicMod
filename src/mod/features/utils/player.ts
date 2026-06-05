@@ -81,33 +81,21 @@ export function getTrackMeta(): Result<any, string> {
   }
 
   const entitySchema = z.object({
-    id: z.string(),
-    title: z.string(),
-    durationMs: z.number(),
-    albumId: z.number(),
-    type: z.string(),
-    genre: z.string(),
-    isAvailable: z.boolean(),
-    artists: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-      }),
-    ),
-    coverUri: z.string().optional(),
-    albums: z
-      .array(
-        z.object({
-          id: z.number(),
-          title: z.string(),
-          year: z.number().optional(),
-          isAvailable: z.boolean(),
-          genre: z.string().optional(),
-          trackCount: z.number(),
-        }),
-      )
-      .optional(),
-  });
+  id: z.string(),
+  title: z.string(),
+  durationMs: z.number(),
+  albumId: z.number().optional().nullable(),
+  type: z.string().optional().nullable(),
+  genre: z.string().optional().nullable(),
+  isAvailable: z.boolean().optional(),
+  artists: z.array(
+    z.object({
+      id: z.string().optional(),
+      name: z.string(),
+    }),
+  ),
+  albums: z.array(z.any()).optional(),
+});
 
   const validatedFiber = entitySchema.safeParse(meta);
 

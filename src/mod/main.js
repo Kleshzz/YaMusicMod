@@ -326,3 +326,10 @@ async function decryptYandexAudio(encryptedData, secretKey) {
 
 // Discord RPC (из-за того, что main.js не бандлится а просто добавляется в оригинальный index.js, все импорты приходится делать вручную. Строчка ниже просто заменится на содержимое файла src\mod\features\utils\discordRPC.js)
 mod_require("discordRPC");
+
+electron.app.whenReady().then(() => {
+  electron.globalShortcut.register('CommandOrControl+Shift+I', () => {
+    const [win] = electron.BrowserWindow.getAllWindows();
+    if (win) win.webContents.toggleDevTools();
+  });
+});
